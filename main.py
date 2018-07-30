@@ -1,6 +1,7 @@
 import os
 from multiprocessing.dummy import Pool
 from html_link_processor import *
+import time
 class crawl:
 
     def __init__(self, directory, base_url):
@@ -9,26 +10,6 @@ class crawl:
         self.found = set()
         self.base_url = base_url
         self.directory = directory
-
-    """
-        The Function creates a directory if it doesn't exists.
-    """
-    def create_project_dir(directory):
-        if not os.path.exists(directory):
-            print("Creating directory")
-            os.makedirs(directory)
-
-    """
-        Set Project name and set base URL
-    """
-    def create_data_files(project_name, base_url):
-        queue = project_name + "/queue.txt"
-        crawled = project_name + "/crawled.txt"
-        if not os.path.isfile(queue):
-            write_file(queue, base_url)
-        if not os.path.isfile(crawled):
-            write_file(queue, '')
-
     """
         Create new file
     """
@@ -79,11 +60,13 @@ class crawl:
     """
         Check the urls for relevant data
     """
-    def check_data(self, match):
+    def check_data(self, match, threads = 4):
         copies_of_match = [match for i in range(0, len(self.queue))]
-        pool = Pool(4)
+        pool = Pool(threads)
+        start = time.time()
         self.crawled = pool.starmap(get_text, zip(list(self.queue),copies_of_match))
-        print(self.crawled)
+        end = time.time()
+        print("Response time with {} is {}".format(threads, end-start))
         for link, response in zip(self.queue, self.crawled):
             if(response):
                 self.found.add(link)
@@ -91,9 +74,8 @@ class crawl:
 if __name__ == "__main__":
     directory = "WalchandSangli"
     project_name = "WalchandSangli"
-    base_url = "http://walchandsangli.ac.in"
+    base_url = "https://geeksforgeeks.org"
     obj = crawl(directory, base_url)
     obj.get_urls()
-    print("Found {} urls".format(len(obj.queue)))
-    obj.check_data(match = "Director")
+    obj.check_data(match = "Director",threads = 16)
     print(obj.found)
