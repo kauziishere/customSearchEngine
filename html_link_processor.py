@@ -8,11 +8,12 @@ def get_links(url):
     links = list()
     for link in soup.find_all('a'):
         got_link = link.get("href")
-        if(".pdf" not in got_link and ".zip" not in got_link):
-            if("http://" in got_link or "https://" in got_link):
-                links.append(got_link)
-            else:
-                links.append(url+"/"+got_link)
+        if got_link != None:
+            if(".pdf" not in got_link and ".zip" not in got_link):
+                if("http://" in got_link or "https://" in got_link):
+                    links.append(got_link)
+                else:
+                    links.append(url+"/"+got_link)
     links = set(links)
     return links
 
