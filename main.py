@@ -54,8 +54,20 @@ class crawl:
     """
     def get_urls(self):
         self.queue.add(self.base_url)
-        for link in self.queue:
-            self.queue = self.queue.union(get_links(link))
+        url_list = list(self.queue)
+        url_dict = dict()
+        for url in url_list:
+            url_dict[url] = 0
+        for link in url_list:
+            if not url_dict[link]:
+                print(link)
+                links_found = list(get_links(self.directory,link))
+                url_list.extend(links_found)
+                for link_found in links_found:
+                    if link_found not in url_dict.keys():
+                        url_dict[link_found] = 0
+                url_dict[link] = 1
+        self.queue = set(url_list)
 
     """
         Check the urls for relevant data
@@ -72,10 +84,11 @@ class crawl:
                 self.found.add(link)
 
 if __name__ == "__main__":
-    directory = "WalchandSangli"
+    directory = "walchandsangli"
     project_name = "WalchandSangli"
-    base_url = "https://geeksforgeeks.org"
+    base_url = "http://walchandsangli.ac.in"
     obj = crawl(directory, base_url)
     obj.get_urls()
-    obj.check_data(match = "Director",threads = 16)
-    print(obj.found)
+    print(obj.queue)
+    #obj.check_data(match = "Director",threads = 16)
+    #print(obj.found)
