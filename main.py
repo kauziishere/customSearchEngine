@@ -84,9 +84,9 @@ class crawl:
                 self.found.add(link)
 
 if __name__ == "__main__":
-    directory = "walchandsangli"
+    directory = "geeksforgeeks"
     project_name = "WalchandSangli"
-    base_url = "http://walchandsangli.ac.in"
+    base_url = "https://geeksforgeeks.org"
     obj = crawl(directory, base_url)
     obj.get_urls()
     print(obj.queue)

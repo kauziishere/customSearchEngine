@@ -9,8 +9,9 @@ def get_links(directory, url):
         links = list()
         for link in soup.find_all('a'):
             try:
-                got_link = link.get("href").strip("www")
-                if((".in" in got_link or ".com" in got_link or ".co" in got_link or ".org" in got_link) and directory in got_link and "@" not in got_link and ".pdf" not in got_link):
+                got_link = link.get("href")
+                got_link = ''.join(got_link.split("www."))
+                if((".in" in got_link or ".com" in got_link or ".co" in got_link or ".org" in got_link) and (directory in got_link) and ("@" not in got_link) and (".pdf" not in got_link)):
                     if("http://" in got_link or "https://" in got_link):
                         links.append(got_link)
                     else:
@@ -21,8 +22,12 @@ def get_links(directory, url):
                 pass
     except:
         pass
-    links = set(links)
-    return links
+    try:
+        if len(links) != 0:
+            return set(links)
+    except:
+        pass
+    return set([])
 
 def get_text(url, match):
     try:
